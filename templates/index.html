@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>                                                                           
+<head>                                                                           
+    <title>Flask/Gevent WebSocket Test</title>                                                   
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" charset="utf-8"> 
+        var ws = null;                             
+        $(document).ready(function(){                                            
+            /*
+            $('form').submit(function(event){
+                console.log("data : " + $('#data').val())                                 
+                ws.send($('#data').val());                                     
+                return false;                                                    
+            });*/
+            $("#send").click(function(evt) {
+                log("Sending Message: "+$("#data").val());
+                ws.send($("#data").val());
+            });
+            function log(m) {
+                d = document.getElementById("log");
+                d.innerHTML = m + "<br/>" + d.innerHTML;
+              }                                                              
+            if ("WebSocket" in window) {  
+                console.log("Creo conexion")                                       
+                var ws = new WebSocket("ws://" + document.domain + ":5000/api");                
+                console.log(ws)
+                ws.onopen = function(evt) { log("socket opened"); };
+                //ws.onmessage = function(evt) { log("message: " + evt.data); };
+                //ws.onclose = function(evt) { log("socket closed"); };
+
+                ws.onmessage = function (msg) {                                  
+                    $("#log").append("<p>--"+msg.data+"--</p>")                      
+                };                                                               
+            } else {                                                             
+                alert("WebSocket not supported");                                
+            }                                                                    
+        });                                                                      
+    </script>                                                                    
+</head>                                                                          
+<body>                                                                           
+    <h1>Send:</h1>                                                               
+    <div method='POST' action='#'>                                              
+        <textarea name='data' id="data"></textarea>                              
+        <div><input type='submit' id="send" value="send" ></div>                                         
+    </div>                                                                      
+    <h1>Receive:</h1>                                                            
+    <div id="log"></div>                                                         
+</body>                                                                          
+</html> 
